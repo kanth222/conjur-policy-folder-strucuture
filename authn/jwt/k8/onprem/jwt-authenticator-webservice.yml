@@ -1,6 +1,6 @@
 #conjur policy load -b conjur/authn-jwt -f jwt-authenticator-webservice.yml
 - !policy
-  id: AWS-AA1234-USEAST1-k8cluster1
+  id: onprem-demok8cluster
   body:
     - !webservice
  
@@ -8,8 +8,8 @@
     # of the Service Account Issuer Discovery service in Kubernetes 
     # If the service is publicly available, uncomment 'jwks-uri'.
     # If the service is not available, uncomment 'public-keys'
-    - !variable jwks-uri
-    #- !variable public-keys
+    #- !variable jwks-uri
+    - !variable public-keys
  
     - !variable issuer
     - !variable token-app-property

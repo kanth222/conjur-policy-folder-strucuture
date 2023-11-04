@@ -1,0 +1,4 @@
+ - !delete
+   record: !policy AWS-AA1234-USEAST1-k8cluster1
+# - !policy
+#   id: conjur/authn-jwt
