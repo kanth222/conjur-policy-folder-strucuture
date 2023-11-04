@@ -1,0 +1,4 @@
+#conjur policy load -b data/gcp-hosts -f data_gcp-hosts_dev-GCF-WID2_grant.yml
+- !grant
+  role: !group conjur/authn-gcp/apps
+  member: !host dev-GCF-WID2

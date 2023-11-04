@@ -1,0 +1,9 @@
+#Sample policy to create a host that uses GCP Authenticator
+#conjur policy load -b data/gcp-hosts -f data_gcp-hosts_dev-GCF-WID2.yml
+#One of the aming convention could be <env>-<GCE/GCF>-<WID>
+#For GCF service-account-email,service-account-id can be used as annotations
+#For GCE project-id,instnace-name can also be used.
+- !host
+  id: dev-GCF-WID2
+  annotations:
+    authn-gcp/service-account-email: conjur-demo-1@pdemo-prj.iam.gserviceaccount.com

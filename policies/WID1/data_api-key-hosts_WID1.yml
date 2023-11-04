@@ -1,0 +1,7 @@
+#Sample policy to create a host that uses API-key Authentication
+#conjur policy load -b data/api-key-hosts -f data_api-key-hosts-WID1.yml
+- !host
+  id: WID1
+  owner: !group data/WID1_RW #group path to be provided
+  annotations:
+      authn/api-key: true

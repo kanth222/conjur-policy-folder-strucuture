@@ -1,0 +1,12 @@
+#conjur policy load -b data/api-key-hosts -f data_api-key-hosts_WID1_entitlements.yml
+- !permit
+  resources:
+    - !variable entVault/DAP-01/CONJURCLOUDSYNC/app1-AWS-useast1-mysql_db/username
+    - !variable entVault/DAP-01/CONJURCLOUDSYNC/app1-AWS-useast1-mysql_db/password
+    - !variable entVault/DAP-01/CONJURCLOUDSYNC/app1-AWS-useast1-mysql_db/port
+    - !variable entVault/DAP-01/CONJURCLOUDSYNC/app1-AWS-useast1-mysql_db/address
+    - !variable entVault/DAP-01/conjurIHGPOC/Database-MSSQLDB-klabs.local-consa1/password
+    - !variable entVault/DAP-01/conjurIHGPOC/Database-MSSQLDB-klabs.local-consa1/username
+  privileges: [ read ]
+  roles:
+    - !host WID1
