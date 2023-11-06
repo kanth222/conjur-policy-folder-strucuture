@@ -1,0 +1,62 @@
+#conjur policy load -b data -f branch.yml
+
+#######################################################################################################
+## 1. This is a sample policy to create branches
+## 2. This would create a brnanch under root and all other policies are loaded into that branch
+## 3. This can be modified as per requirement.
+#######################################################################################################
+
+- !policy
+  id: poc/demo-apps
+  annotations:
+    description: root branch for poc policies
+
+- !policy
+  id: poc/demo-apps/api-key-hosts
+  annotations:
+    description: All API-key host policies branch
+
+- !policy
+  id: poc/demo-apps/gcp-hosts
+  annotations:
+    description: All hosts that use GCP authenticator
+
+- !policy
+  id: poc/demo-apps/aws-hosts
+  annotations:
+    description: All hosts that use IAM authenticator
+
+- !policy
+  id: poc/demo-apps/jwt-hosts
+  annotations:
+    description: All hosts that use JWT Auhenticator
+
+- !policy
+  id: poc/demo-apps/jwt-hosts/k8
+  annotations:
+    description: All k8 hosts that use JWT Auhenticator
+
+- !policy
+  id: poc/demo-apps/jwt-hosts/others
+  annotations:
+    description: All other hosts that use JWT Auhenticator
+
+- !policy
+  id: poc/demo-apps/jwt-hosts/k8/aws
+  annotations:
+    description: All AWS k8 hosts that use JWT Auhenticator
+
+- !policy
+  id: poc/demo-apps/jwt-hosts/k8/GKE
+  annotations:
+    description: All GKE k8 hosts that use JWT Auhenticator
+
+- !policy
+  id: poc/demo-apps/jwt-hosts/k8/onprem
+  annotations:
+    description: All AWS k8 hosts that use JWT Auhenticator
+
+- !policy
+  id: poc/demo-apps/jwt-hosts/k8/onprem/onprem-demok8cluster
+  annotations:
+    descripton: All onprem demok8 cluster policies
