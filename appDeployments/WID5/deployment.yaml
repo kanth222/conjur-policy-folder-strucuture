@@ -52,21 +52,19 @@ spec:
           name: conjur-templates
         - mountPath: /run/conjur
           name: conjur-access-token
-      - envFrom:
-        - configMapRef:
-            name: conjur-connect
-        image: cyberark/secrets-provider-for-k8s
-        imagePullPolicy: IfNotPresent
-        name: configurator
-        volumeMounts:
-        - mountPath: /conjur/podinfo
-          name: podinfo
-        - mountPath: /conjur/secrets
-          name: conjur-secrets
-        - mountPath: /conjur/templates
-          name: conjur-templates
-        # - mountPath: /run/conjur
-        #   name: conjur-access-token
+      - image: cyberark/secrets-provider-for-k8s
+          name: configurator
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: conjur-connect
+          volumeMounts:
+            - name: podinfo
+              mountPath: /conjur/podinfo
+            - name: conjur-secrets
+              mountPath: /conjur/secrets
+            - name: conjur-templates
+              mountPath: /conjur/templates
       - env:
         - name: JWT_TOKEN_PATH
           value: /var/run/secrets/tokens/jwt
