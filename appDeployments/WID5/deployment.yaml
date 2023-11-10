@@ -83,7 +83,7 @@ spec:
           name: jwt-token
       volumes:
       - configMap:
-          defaultMode: 420
+          # defaultMode: 420
           name: nodejs-db-templates
         name: conjur-templates
       - emptyDir:
@@ -94,13 +94,13 @@ spec:
         name: conjur-access-token
       - name: jwt-token
         projected:
-          defaultMode: 420
+          # defaultMode: 420
           sources:
           - serviceAccountToken:
               expirationSeconds: 6000
               path: jwt
       - downwardAPI:
-          defaultMode: 420
+          # defaultMode: 420
           items:
           - fieldRef:
               apiVersion: v1
