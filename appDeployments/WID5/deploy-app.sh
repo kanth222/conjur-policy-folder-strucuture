@@ -89,8 +89,8 @@ kubectl create configmap conjur-connect \
   --from-literal MY_POD_NAMESPACE="$APP_NAMESPACE" \
   --from-file CONJUR_SSL_CERTIFICATE="$CONJUR_CERT_FILE"
 
-kubectl delete serviceaccount demo-app-sa --ignore-not-found=true
-kubectl create serviceaccount demo-app-sa
+kubectl delete serviceaccount test-app-sa --ignore-not-found=true
+kubectl create serviceaccount test-app-sa
 
 kubectl delete configmap nodejs-db-templates --ignore-not-found=true
 kubectl create configmap nodejs-db-templates --from-file=demo-app.tpl
