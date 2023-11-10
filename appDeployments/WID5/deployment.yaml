@@ -2,119 +2,75 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: demo-nodejs-app-push-to-file
-  name: demo-nodejs-app-push-to-file
+    app: test-app
+  name: test-app
   namespace: $APP_NAMESPACE
 spec:
+  replicas: 1
   selector:
     matchLabels:
-      app: demo-nodejs-app-push-to-file
-  replicas: 1
+      app: test-app
   template:
     metadata:
-      annotations:
-        conjur.org/conjur-secrets-policy-path.node-demo-app: data/vault/conjurIHGPOC/Database-MySQL-gke-ihg-conjur-k8-default-pool-01de1c74-jqxm-root
-        conjur.org/conjur-secrets.node-demo-app: |
-          - Database
-          - address
-          - username
-          - password
-          - Port
-        conjur.org/container-mode: sidecar
-        conjur.org/secret-file-format.node-demo-app: template
-        conjur.org/secret-file-path.node-demo-app: ./application.js
-        conjur.org/secrets-destination: file
-        conjur.org/secrets-refresh-enabled: "true"
-        conjur.org/secrets-refresh-interval: 10s
       labels:
-        app: demo-nodejs-app-push-to-file
+        app: test-app
+      annotations:
+        conjur.org/container-mode: sidecar
+        conjur.org/secrets-destination: file
+        conjur.org/jwt-token-path: /var/run/secrets/tokens/jwt
+        conjur.org/conjur-secrets.test-app: |
+          - admin-username: data/vault/conjurIHGPOC/Database-MySQL-gke-ihg-conjur-k8-default-pool-01de1c74-jqxm-root/username
+          - admin-password: data/vault/conjurIHGPOC/Database-MySQL-gke-ihg-conjur-k8-default-pool-01de1c74-jqxm-root/password
+        conjur.org/secret-file-path.test-app: "./credentials.yaml"
+        conjur.org/secret-file-format.test-app: "yaml"
+        conjur.org/secrets-refresh-interval: 10s
     spec:
       serviceAccountName: test-app-sa
-      hostAliases:
-      - ip: "172.16.11.26"
-        hostnames:
-          - "conjur-leader.atlanta.testing-labs.net"
       containers:
-      - env:
-        - name: DB_CONFIG_LOCATION
-          value: /opt/secrets/conjur/application.yml
+      - name: test-app
         image: kanth22/demo-node-app:latest
         imagePullPolicy: Always
-        name: demo-nodejs-app-push-to-file
-        ports:
-        - containerPort: 8080
-          protocol: TCP
         volumeMounts:
-        - mountPath: /opt/secrets/conjur
-          name: conjur-secrets
-          readOnly: true
-        - mountPath: /conjur/templates
-          name: conjur-templates
-        - mountPath: /run/conjur
-          name: conjur-access-token
-      - image: cyberark/secrets-provider-for-k8s
-        name: configurator
-        imagePullPolicy: IfNotPresent
+          - name: conjur-secrets
+            mountPath: /opt/secrets/conjur
+            readOnly: true
+      - name: cyberark-secrets-provider-for-k8s
+        image: 'cyberark/secrets-provider-for-k8s:latest'
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: conjur-status
+          mountPath: /conjur/status
+        - name: podinfo
+          mountPath: /conjur/podinfo
+        - name: conjur-secrets
+          mountPath: /conjur/
+        - name: jwt-token
+          mountPath: /var/run/secrets/tokens
+        env:
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
         envFrom:
           - configMapRef:
               name: conjur-connect
-        volumeMounts:
-          - name: podinfo
-            mountPath: /conjur/podinfo
-          - name: conjur-secrets
-            mountPath: /conjur/secrets
-          - name: conjur-templates
-            mountPath: /conjur/templates
-      - env:
-        - name: JWT_TOKEN_PATH
-          value: /var/run/secrets/tokens/jwt
-        envFrom:
-        - configMapRef:
-            name: conjur-connect
-        image: cyberark/conjur-authn-k8s-client
-        imagePullPolicy: Always
-        name: authenticator
-        volumeMounts:
-        - mountPath: /run/conjur
-          name: conjur-access-token
-        - mountPath: /var/run/secrets/tokens
-          name: jwt-token
       volumes:
-      - configMap:
-          # defaultMode: 420
-          name: nodejs-db-templates
-        name: conjur-templates
-      - emptyDir:
-          medium: Memory
-        name: conjur-secrets
-      - emptyDir:
-          medium: Memory
-        name: conjur-access-token
-      - name: jwt-token
-        projected:
-          # defaultMode: 420
-          sources:
-          - serviceAccountToken:
-              expirationSeconds: 6000
-              path: jwt
-      - downwardAPI:
-          # defaultMode: 420
-          items:
-          - fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.annotations
-            path: annotations
-        name: podinfo
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: demo-nodejs-app-push-to-file
-  namespace: $APP_NAMESPACE
-spec:
-  type: NodePort
-  ports:
-    - port: 8080
-      nodePort: 32022
-  selector:
-    app: demo-nodejs-app-push-to-file
+        - name: conjur-status
+          emptyDir:
+            medium: Memory
+        - name: podinfo
+          downwardAPI:
+            items:
+              - path: "annotations"
+                fieldRef:
+                  fieldPath: metadata.annotations
+        - name: conjur-secrets
+          emptyDir:
+            medium: Memory
+        - name: jwt-token
+          projected:
+            sources:
+              - serviceAccountToken:
+                  path: jwt
+                  expirationSeconds: 6000
+                  # audience: conjur
