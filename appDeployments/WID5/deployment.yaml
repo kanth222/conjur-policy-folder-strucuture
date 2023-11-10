@@ -35,7 +35,7 @@ spec:
             mountPath: /opt/secrets/conjur
             readOnly: true
       - name: cyberark-secrets-provider-for-k8s
-        image: 'cyberark/secrets-provider-for-k8s:latest'
+        image: cyberark/secrets-provider-for-k8s:1.6.1-2287
         imagePullPolicy: Always
         volumeMounts:
         - name: conjur-status
