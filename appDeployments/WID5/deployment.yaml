@@ -29,7 +29,7 @@ spec:
       labels:
         app: demo-nodejs-app-push-to-file
     spec:
-      serviceAccountName: demo-app-sa
+      serviceAccountName: test-app-sa
       hostAliases:
       - ip: "172.16.11.26"
         hostnames:
