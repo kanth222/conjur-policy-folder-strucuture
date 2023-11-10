@@ -97,7 +97,7 @@ kubectl create configmap nodejs-db-templates --from-file=demo-app.tpl
 
 # DEPLOYMENT
 envsubst < deployment.yaml | kubectl replace --force -f -
-if ! kubectl wait deployment demo-nodejs-app-push-to-file --for condition=Available=True --timeout=90s
+if ! kubectl wait deployment test-app --for condition=Available=True --timeout=90s
   then exit 1
 fi
 
